@@ -9,7 +9,11 @@ function saveWindowState(stateMap) {
     workspace.windowList().forEach(win => {
         console.info(`setting state for ${win.resourceName} ${win.resourceClass}`);
         stateMap.set(win, {
-            desktops: [...win.desktops],
+            desktops: [...win.desktops.map((winDesktop) => {
+                return workspace.desktops.findIndex((desktop) => {
+                    return desktop.id === winDesktop.id;
+                });
+            })],
             x: win.x,
             y: win.y,
             width: win.width,
@@ -23,7 +27,19 @@ function restoreWindowState(stateMap) {
         console.info(`restoring ${win.resourceName} ${win.resourceClass}`);
         if (workspace.windowList().includes(win)) {
             console.info(`Would restore desktops ${JSON.stringify(state.desktops)}`);
-            // win.desktops = state.desktops;
+            const targetDesktops = state.desktops.map((savedDesktopIndex) => {
+                console.info(`in map index ${savedDesktopIndex}`);
+                if (workspace.desktops.length > savedDesktopIndex &&
+                    savedDesktopIndex >= 0
+                ) { return workspace.desktops[savedDesktopIndex]; } else {
+                    return -1;
+                }
+            }).filter(i => i !== -1);
+            console.info(`targetDesktops ${JSON.stringify(targetDesktops)}`);
+            if (targetDesktops.length > 0) {
+                console.info(`setting win.desktops to targetDesktops`);
+                win.desktops = targetDesktops;
+            }
             // win.x = state.x;
             // win.y = state.y;
             // win.width = state.width;
@@ -39,45 +55,38 @@ function toggleDesktops() {
 
     if (current === 1) {
         console.info('Switching 1->6');
-        // saveWindowState(oneDtMultiDispState);
+        saveWindowState(oneDtMultiDispState);
         for (let i = current; i < TARGET_DESKTOPS; i++) {
             workspace.createDesktop(i, `Desktop ${i + 1}`);
         }
-        console.info('boop');
         workspace.desktopGridHeight = 2;
-        console.info('boop');
         console.info('Map size:', multDtOneDispState.size);
         multDtOneDispState.forEach((state, win) => {
-            console.info(`Key: ${win.resourceName}, State:`, state);
+            console.info(`Key: ${win.resourceName}, State:`, JSON.stringify(state));
         });
-        console.info('boop');
 
         restoreWindowState(multDtOneDispState);
         console.info('trying to go to desktop index ' + savedCurrentDesktopIndex + `of length ${workspace.desktops.length}`);
         if (workspace.desktops.length > savedCurrentDesktopIndex &&
             savedCurrentDesktopIndex >= 0
         ) {
-            const targetDesktop = workspace.desktops[savedCurrentDesktopIndex];
-            console.info(`targetDesktop ${JSON.stringify(targetDesktop)}`);
-            console.info(`currentDesktop before ${JSON.stringify(workspace.currentDesktop)}`);
-            workspace.currentDesktop = targetDesktop;
-            console.info(`currentDesktop after ${JSON.stringify(workspace.currentDesktop)}`);
+            workspace.currentDesktop = workspace.desktops[savedCurrentDesktopIndex];
         }
     } else {
         console.info('Switching 6->1');
         savedCurrentDesktopIndex = workspace.desktops.findIndex((desktop) => {
-            return desktop.id === workspace.currentDesktop.id
+            return desktop.id === workspace.currentDesktop.id;
         });
         console.info(`savedCurrentDesktopIndex ${savedCurrentDesktopIndex}`);
         saveWindowState(multDtOneDispState);
         console.info('Map size:', multDtOneDispState.size);
         multDtOneDispState.forEach((state, win) => {
-            console.info(`Key: ${win.resourceName}, State:`, state);
+            console.info(`Key: ${win.resourceName}, State:`, JSON.stringify(state));
         });
         for (let i = current - 1; i >= 1; i--) {
             workspace.removeDesktop(workspace.desktops[i]);
         }
-        // restoreWindowState(oneDtMultiDispState);
+        restoreWindowState(oneDtMultiDispState);
     }
 }
 
