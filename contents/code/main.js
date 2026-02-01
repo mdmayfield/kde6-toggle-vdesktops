@@ -7,6 +7,7 @@ function toggleDesktops() {
         for (let i = current; i < TARGET_DESKTOPS; i++) {
             workspace.createDesktop(i, `Desktop ${i + 1}`);
         }
+        workspace.desktopGridHeight = 2;
     } else {
         for (let i = current - 1; i >= 1; i--) {
             workspace.removeDesktop(workspace.desktops[i]);
@@ -14,4 +15,9 @@ function toggleDesktops() {
     }
 }
 
-toggleDesktops();
+registerShortcut(
+    "toggle-desktops",
+    "Toggle Virtual Desktops (1 ↔ 6)",
+    "Meta+Ctrl+D",
+    toggleDesktops
+);

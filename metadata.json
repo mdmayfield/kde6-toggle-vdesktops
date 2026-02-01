@@ -6,5 +6,15 @@
     "Version": "1.0",
     "License": "MIT"
   },
-  "KPackageStructure": "KWin/Script"
+  "X-Plasma-API": "javascript",
+  "X-Plasma-MainScript": "code/main.js",
+  "KPackageStructure": "KWin/Script",
+  "X-KWin-Script": {
+    "Actions": [
+      {
+        "Name": "toggle",
+        "Text": "Toggle Virtual Desktops (1 ↔ 6)"
+      }
+    ]
+  }
 }
