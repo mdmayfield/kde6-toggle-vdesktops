@@ -1,0 +1,10 @@
+{
+  "KPlugin": {
+    "Id": "toggle-desktops",
+    "Name": "Toggle Virtual Desktops 1 ↔ 6",
+    "Description": "Toggles the number of virtual desktops between 1 and 6",
+    "Version": "1.0",
+    "License": "MIT"
+  },
+  "KPackageStructure": "KWin/Script"
+}
