@@ -40,10 +40,18 @@ function restoreWindowState(stateMap) {
                 console.info(`setting win.desktops to targetDesktops`);
                 win.desktops = targetDesktops;
             }
-            // win.x = state.x;
-            // win.y = state.y;
-            // win.width = state.width;
-            // win.height = state.height;
+            // OMG KWin is not well documented for this
+            // had to dig a long time, found https://discuss.kde.org/t/kwin-script-window-framegeometry-seems-to-be-readonly-even-if-the-docs-states-otherwise/17175
+
+            // make a clone of the existing geometry
+            const targetFrameGeometry = Object.assign({}, win.frameGeometry);
+            // mutate it
+            targetFrameGeometry.x = state.x;
+            targetFrameGeometry.y = state.y;
+            targetFrameGeometry.width = state.width;
+            targetFrameGeometry.height = state.height;
+            // ONLY NOW can we update the window's sizing/pos without silently failing
+            win.frameGeometry = targetFrameGeometry;
         } else {
             console.info('NOT IN WORKSPACE');
         }
