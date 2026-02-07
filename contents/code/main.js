@@ -111,3 +111,7 @@ registerShortcut(
     "Meta+Ctrl+D",
     toggleDesktops
 );
+
+if (workspace.desktops.length === 6) {
+    workspace.desktopGridHeight = 2;
+}
